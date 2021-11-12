@@ -1,0 +1,71 @@
+/* This file is part of the the dci project. Copyright (C) 2013-2021 vopl, shtoba.
+   This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public
+   License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+   You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>. */
+
+#pragma once
+
+#include "pch.hpp"
+#include "../user.hpp"
+
+namespace dci::impl
+{
+    class Bytes;
+}
+
+namespace dci::bytes::impl
+{
+    using Bytes = dci::impl::Bytes;
+    class Alter;
+
+    class Cursor
+        : public User
+    {
+    public:
+        static void tryDestruction(Cursor*);
+
+    public:
+        Cursor();
+        Cursor(const Cursor& from);
+        Cursor(Cursor&& from);
+        Cursor(Bytes* container, bool posAtBegin);
+        ~Cursor() override;
+
+        Cursor& operator=(const Cursor& from);
+        Cursor& operator=(Cursor&& from);
+
+    public:
+        bool atBegin() const;
+        bool atEnd() const;
+
+        uint32 pos() const;
+
+        uint32 size() const;
+        uint32 sizeBack() const;
+
+        int32 advance(int32 offset);
+        int32 advanceChunks(int32 offset);
+
+        const byte* continuousData() const;
+        uint32 continuousDataSize() const;
+        uint32 continuousDataOffset() const;
+
+        uint32 read(void* dst, uint32 maxSize);
+        uint32 read(Bytes& dst, uint32 maxSize);
+        uint32 read(Alter& dst, uint32 maxSize);
+
+        int compare(const void* with, uint32 size);
+        int compare(const Bytes& with);
+        int compare(Cursor& with);
+
+        String toString(uint32 maxSize = ~uint32());
+        String toHex(uint32 maxSize = ~uint32());
+
+    protected:
+        uint32 readImpl(auto&& with, uint32 maxSize);
+        int compareImpl(auto&& with);
+        bool consistent() const;
+    };
+}
