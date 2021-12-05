@@ -106,8 +106,8 @@ namespace dci::bytes::impl
             if(!_chunk)
             {
                 _chunkPos = static_cast<uint16>(std::min(offset, Chunk::bufferSize()));
-                _chunk = new Chunk(0, _chunkPos);
-                _container->setBuffer(new Buffer(_chunk, _chunk, _chunkPos));
+                _chunk = new Chunk{0, _chunkPos};
+                _container->setBuffer(new Buffer{_chunk, _chunk, _chunkPos});
                 offset -= _chunkPos;
             }
 
@@ -134,7 +134,7 @@ namespace dci::bytes::impl
 
             while(offset > Chunk::bufferSize())
             {
-                _chunk->setNext(new Chunk(nullptr, _chunk, 0, Chunk::bufferSize()));
+                _chunk->setNext(new Chunk{nullptr, _chunk, 0, Chunk::bufferSize()});
                 _chunk = _chunk->next();
                 offset -= Chunk::bufferSize();
             }
@@ -142,7 +142,7 @@ namespace dci::bytes::impl
             dbgAssert(offset <= Chunk::bufferSize());
             if(offset)
             {
-                _chunk->setNext(new Chunk(nullptr, _chunk, 0, static_cast<uint16>(offset)));
+                _chunk->setNext(new Chunk{nullptr, _chunk, 0, static_cast<uint16>(offset)});
                 _chunk = _chunk->next();
                 _chunkPos = static_cast<uint16>(offset);
             }
@@ -167,14 +167,14 @@ namespace dci::bytes::impl
             {
                 if(offset <= Chunk::bufferSize())
                 {
-                    _chunk = new Chunk(static_cast<uint16>(Chunk::bufferSize()-offset), Chunk::bufferSize());
-                    _container->setBuffer(new Buffer(_chunk, _chunk, offset));
+                    _chunk = new Chunk{static_cast<uint16>(Chunk::bufferSize()-offset), Chunk::bufferSize()};
+                    _container->setBuffer(new Buffer{_chunk, _chunk, offset});
                     dbgHeavyAssert(consistent());
                     return;
                 }
 
-                _chunk = new Chunk(0, Chunk::bufferSize());
-                _container->setBuffer(new Buffer(_chunk, _chunk, Chunk::bufferSize()));
+                _chunk = new Chunk{0, Chunk::bufferSize()};
+                _container->setBuffer(new Buffer{_chunk, _chunk, Chunk::bufferSize()});
                 offset -= Chunk::bufferSize();
             }
 
@@ -197,7 +197,7 @@ namespace dci::bytes::impl
 
             while(offset > Chunk::bufferSize())
             {
-                _chunk->setPrev(new Chunk(_chunk, nullptr, 0, Chunk::bufferSize()));
+                _chunk->setPrev(new Chunk{_chunk, nullptr, 0, Chunk::bufferSize()});
                 _chunk = _chunk->prev();
                 offset -= Chunk::bufferSize();
             }
@@ -205,7 +205,7 @@ namespace dci::bytes::impl
             dbgAssert(offset <= Chunk::bufferSize());
             if(offset)
             {
-                _chunk->setPrev(new Chunk(_chunk, nullptr, static_cast<uint16>(Chunk::bufferSize()-offset), Chunk::bufferSize()));
+                _chunk->setPrev(new Chunk{_chunk, nullptr, static_cast<uint16>(Chunk::bufferSize()-offset), Chunk::bufferSize()});
                 _chunk = _chunk->prev();
             }
 
@@ -334,7 +334,7 @@ namespace dci::bytes::impl
             _pos += size;
 
             dbgAssert(!_container->buffer());
-            _container->setBuffer(new Buffer(_chunk, _chunk, size));
+            _container->setBuffer(new Buffer{_chunk, _chunk, size});
 
             dbgHeavyAssert(consistent());
             return;
@@ -458,7 +458,7 @@ namespace dci::bytes::impl
             _chunk = srcLast;
             _pos = size;
 
-            _container->setBuffer(new Buffer(srcFirst, srcLast, size));
+            _container->setBuffer(new Buffer{srcFirst, srcLast, size});
             dbgHeavyAssert(consistent());
             return;
         }
@@ -486,7 +486,7 @@ namespace dci::bytes::impl
         if(_chunkPos > 0 && _chunkPos < _chunk->size())
         {
             //порвать текущий
-            Chunk* next = new Chunk(_chunk, _chunk->next(), 0, _chunk->size() - _chunkPos);
+            Chunk* next = new Chunk{_chunk, _chunk->next(), 0, static_cast<uint16>(_chunk->size() - _chunkPos)};
 
             if(next->next())
             {

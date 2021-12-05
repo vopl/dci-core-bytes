@@ -36,7 +36,7 @@ namespace
             }
 
             size += ss;
-            last->setNext(new Chunk(nullptr, last));
+            last->setNext(new Chunk{nullptr, last});
             last = last->next();
         }
 
