@@ -38,6 +38,7 @@ namespace dci::impl
         bool operator>(const Bytes& with) const;
         bool operator<=(const Bytes& with) const;
         bool operator>=(const Bytes& with) const;
+        std::strong_ordering operator<=>(const Bytes& with) const;
 
         bool empty() const;
         uint32 size() const;
@@ -56,6 +57,6 @@ namespace dci::impl
         Cursor cend() const;
 
     private:
-        int compare(const Bytes& with) const;
+        std::strong_ordering compare(const Bytes& with) const;
     };
 }

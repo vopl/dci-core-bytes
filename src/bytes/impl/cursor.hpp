@@ -9,6 +9,7 @@
 
 #include "pch.hpp"
 #include "../user.hpp"
+#include <compare>
 
 namespace dci::impl
 {
@@ -56,16 +57,16 @@ namespace dci::bytes::impl
         uint32 read(Bytes& dst, uint32 maxSize);
         uint32 read(Alter& dst, uint32 maxSize);
 
-        int compare(const void* with, uint32 size);
-        int compare(const Bytes& with);
-        int compare(Cursor& with);
+        std::strong_ordering compare(const void* with, uint32 size);
+        std::strong_ordering compare(const Bytes& with);
+        std::strong_ordering compare(Cursor& with);
 
         String toString(uint32 maxSize = ~uint32());
         String toHex(uint32 maxSize = ~uint32());
 
     protected:
         uint32 readImpl(auto&& with, uint32 maxSize);
-        int compareImpl(auto&& with);
+        std::strong_ordering compareImpl(auto&& with);
         bool consistent() const;
     };
 }

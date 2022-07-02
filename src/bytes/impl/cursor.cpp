@@ -332,14 +332,14 @@ namespace dci::bytes::impl
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compare(const void* with, uint32 size)
+    std::strong_ordering Cursor::compare(const void* with, uint32 size)
     {
         dbgHeavyAssert(consistent());
         return compareImpl(performing::ArrayPromotor(with, size));
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compare(const Bytes& with)
+    std::strong_ordering Cursor::compare(const Bytes& with)
     {
         dbgHeavyAssert(consistent());
         Cursor cursor(with.cbegin());
@@ -347,7 +347,7 @@ namespace dci::bytes::impl
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compare(Cursor& with)
+    std::strong_ordering Cursor::compare(Cursor& with)
     {
         dbgHeavyAssert(consistent());
         return compareImpl(performing::CursorPromotor(with));
@@ -424,7 +424,7 @@ namespace dci::bytes::impl
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compareImpl(auto&& with)
+    std::strong_ordering Cursor::compareImpl(auto&& with)
     {
         dbgHeavyAssert(consistent());
         return performing::execute(
@@ -434,7 +434,7 @@ namespace dci::bytes::impl
             {
                 if(!size)
                 {
-                    return performing::StepResult{true, 0};
+                    return performing::StepResult{true, std::strong_ordering::equal};
                 }
 
                 dbgAssert(ownData || rivalData);
@@ -443,14 +443,14 @@ namespace dci::bytes::impl
                 {
                     //оба потока продолжаются, сравнивать контент
                     int cmp = std::memcmp(ownData, rivalData, size);
-                    return performing::StepResult{0 != cmp, cmp};
+                    return performing::StepResult{0 != cmp, cmp == 0 ? std::strong_ordering::equal : cmp < 0 ? std::strong_ordering::less : std::strong_ordering::greater};
                 }
 
-                if(ownData) return performing::StepResult{true, 0};//собственный поток еще не закончился, внешний закончился - сравнённые данные равны
+                if(ownData) return performing::StepResult{true, std::strong_ordering::greater};//собственный поток еще не закончился, внешний закончился - собственные данные 'больше'
 
                 //if(rivalData) return -1;//собственный поток закончился, внешний еще нет - внешние данные 'больше'
                 dbgAssert(rivalData);
-                return performing::StepResult{true, -1};
+                return performing::StepResult{true, std::strong_ordering::less};
             });
     }
 

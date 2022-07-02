@@ -7,6 +7,7 @@
 
 #include "pch.hpp"
 #include "impl/cursor.hpp"
+#include <compare>
 #include <dci/bytes/cursor.hpp>
 #include <dci/bytes.hpp>
 
@@ -132,19 +133,19 @@ namespace dci::bytes
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compare(const void* with, uint32 size)
+    std::strong_ordering Cursor::compare(const void* with, uint32 size)
     {
         return impl().compare(with, size);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compare(const Bytes& with)
+    std::strong_ordering Cursor::compare(const Bytes& with)
     {
         return impl().compare(himpl::face2Impl(with));
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Cursor::compare(Cursor& with)
+    std::strong_ordering Cursor::compare(Cursor& with)
     {
         return impl().compare(himpl::face2Impl(with));
     }

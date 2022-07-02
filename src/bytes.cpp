@@ -101,6 +101,12 @@ namespace dci
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    std::strong_ordering Bytes::operator<=>(const Bytes& with) const
+    {
+        return impl() <=> himpl::face2Impl(with);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     bool Bytes::empty() const
     {
         return impl().empty();

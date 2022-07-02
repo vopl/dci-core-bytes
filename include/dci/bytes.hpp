@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <compare>
 
 namespace dci
 {
@@ -55,6 +56,7 @@ namespace dci
         bool operator>(const Bytes& with) const;
         bool operator<=(const Bytes& with) const;
         bool operator>=(const Bytes& with) const;
+        std::strong_ordering operator<=>(const Bytes& with) const;
 
         bool empty() const;
         uint32 size() const;

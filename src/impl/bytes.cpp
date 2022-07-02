@@ -101,6 +101,12 @@ namespace dci::impl
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    std::strong_ordering Bytes::operator<=>(const Bytes& with) const
+    {
+        return compare(with);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     bool Bytes::empty() const
     {
         return !buffer() || !buffer()->size();
@@ -173,28 +179,16 @@ namespace dci::impl
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int Bytes::compare(const Bytes& with) const
+    std::strong_ordering Bytes::compare(const Bytes& with) const
     {
-        Cursor cursor1(cbegin());
-        Cursor cursor2(with.cbegin());
-
-        int cmp = cursor1.compare(cursor2);
-
-        if(0 != cmp)
+        if(this == &with)
         {
-            return cmp;
+            return std::strong_ordering::equal;
         }
 
-        if(cursor1.size() > 0)
-        {
-            return 1;
-        }
+        Cursor cursor1{cbegin()};
+        Cursor cursor2{with.cbegin()};
 
-        if(cursor2.size() > 0)
-        {
-            return -1;
-        }
-
-        return 0;
+        return cursor1.compare(cursor2);
     }
 }

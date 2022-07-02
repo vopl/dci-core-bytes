@@ -5,6 +5,7 @@
    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
    You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>. */
 
+#include <compare>
 #include <dci/test.hpp>
 #include "mkBig.hpp"
 
@@ -52,9 +53,9 @@ TEST(bytes, cursor)
         Alter a(b.begin());
         EXPECT_EQ(0u, c.read(a, 220));
 
-        EXPECT_EQ(0, c.compare(nullptr, 0));
-        EXPECT_EQ(0, c.compare(b));
-        EXPECT_EQ(0, c.compare(a));
+        EXPECT_EQ(std::strong_ordering::equal, c.compare(nullptr, 0));
+        EXPECT_EQ(std::strong_ordering::equal, c.compare(b));
+        EXPECT_EQ(std::strong_ordering::equal, c.compare(a));
 
         EXPECT_EQ(String(), c.toString());
         EXPECT_EQ(String(), c.toHex());
@@ -105,7 +106,7 @@ TEST(bytes, cursor)
         EXPECT_EQ(5u, c.read(a, 5));
         EXPECT_EQ(5u, b2.size());
 
-        EXPECT_EQ(0, c.compare(nullptr, 0));
+        EXPECT_EQ(std::strong_ordering::equal, c.compare(nullptr, 0));
 
         EXPECT_NE(String(), c.toString());
         EXPECT_EQ(String(), c.toHex());
@@ -140,7 +141,7 @@ TEST(bytes, cursor)
                 {
                     Cursor c2(c);
                     byte ab[1] = {byte(pos)};
-                    EXPECT_EQ(0, c2.compare(ab, 1));
+                    EXPECT_EQ(std::strong_ordering::equal, c2.compare(ab, 1));
                 }
 
                 pos += static_cast<uint32>(c.advance(step));
@@ -175,7 +176,7 @@ TEST(bytes, cursor)
                 {
                     Cursor c2(c);
                     byte ab[1] = {byte(pos)};
-                    EXPECT_EQ(0, c2.compare(ab, 1));
+                    EXPECT_EQ(std::strong_ordering::equal, c2.compare(ab, 1));
                 }
             }
             while(!c.atBegin());
