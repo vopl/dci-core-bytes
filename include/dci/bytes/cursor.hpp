@@ -46,7 +46,7 @@ namespace dci::bytes
 
         int32 advance(int32 offset);
 
-        int32 advanceChunks(int32 offset);
+        int32 advanceChunks(int32 amount);
         const byte* continuousData() const; //инвалидируется при cow, модификациях контейнера
         uint32 continuousDataSize() const;  //инвалидируется при cow, модификациях контейнера
         uint32 continuousDataOffset() const;  //инвалидируется при cow, модификациях контейнера

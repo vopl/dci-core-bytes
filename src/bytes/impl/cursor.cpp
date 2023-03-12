@@ -221,7 +221,7 @@ namespace dci::bytes::impl
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int32 Cursor::advanceChunks(int32 offset)
+    int32 Cursor::advanceChunks(int32 amount)
     {
         dbgHeavyAssert(consistent());
 
@@ -232,36 +232,36 @@ namespace dci::bytes::impl
             _pos -= _chunkPos;
             _chunkPos = 0;
 
-            if(offset > 0)
+            if(amount > 0)
             {
                 //fwd
-                while(offset)
+                while(amount)
                 {
                     if(_chunk->next())
                     {
                         _pos += _chunk->size();
                         _chunk = _chunk->next();
-                        offset--;
+                        amount--;
                         advanced++;
                     }
                     else
                     {
                         _pos += _chunk->size();
                         _chunkPos = _chunk->size();
-                        offset--;
+                        amount--;
                         advanced++;
                         break;
                     }
                 }
             }
-            else if(offset < 0)
+            else if(amount < 0)
             {
                 //bwd
-                while(offset && _chunk->prev())
+                while(amount && _chunk->prev())
                 {
                     _chunk = _chunk->prev();
                     _pos -= _chunk->size();
-                    offset++;
+                    amount++;
                     advanced--;
                 }
             }

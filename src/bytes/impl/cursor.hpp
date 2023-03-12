@@ -47,7 +47,7 @@ namespace dci::bytes::impl
         uint32 sizeBack() const;
 
         int32 advance(int32 offset);
-        int32 advanceChunks(int32 offset);
+        int32 advanceChunks(int32 amount);
 
         const byte* continuousData() const;
         uint32 continuousDataSize() const;

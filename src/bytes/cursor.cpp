@@ -91,9 +91,9 @@ namespace dci::bytes
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    int32 Cursor::advanceChunks(int32 offset)
+    int32 Cursor::advanceChunks(int32 amount)
     {
-        return impl().advanceChunks(offset);
+        return impl().advanceChunks(amount);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
