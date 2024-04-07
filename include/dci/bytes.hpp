@@ -16,12 +16,22 @@
 
 #include <array>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <deque>
 #include <compare>
 
 namespace dci
 {
+    namespace bytes::details
+    {
+        struct CszWrapper
+        {
+            const char * _csz;
+            CszWrapper(const char* csz) : _csz(csz) {}
+        };
+    }
+
     class API_DCI_BYTES Bytes
         : public himpl::FaceLayout<Bytes, impl::Bytes>
     {
@@ -31,13 +41,19 @@ namespace dci
         Bytes(Bytes&& from);
         Bytes(bytes::Chunk* first, bytes::Chunk* last, uint32 size);
         Bytes(const void* data, uint32 size);
-        Bytes(const char* csz);
+        explicit Bytes(bytes::details::CszWrapper cszWrapper);
 
-        template<class T, std::size_t N> requires(sizeof(byte) == sizeof(T))
-        Bytes(const std::array<T, N>& data);
+        template<std::size_t sizeWithZero>
+        Bytes(const char (&data)[sizeWithZero]);
+
+        template<class T, std::size_t size> requires(sizeof(byte) == sizeof(T))
+        Bytes(const std::array<T, size>& data);
 
         template <class T, class... OtherArgs> requires(sizeof(byte) == sizeof(T))
         Bytes(const std::basic_string<T, OtherArgs...>& data);
+
+        template <class T, class... OtherArgs> requires(sizeof(byte) == sizeof(T))
+        Bytes(const std::basic_string_view<T, OtherArgs...>& data);
 
         template <class T, class... OtherArgs> requires(sizeof(byte) == sizeof(T))
         Bytes(const std::vector<T, OtherArgs...>& data);
@@ -76,6 +92,13 @@ namespace dci
     };
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template<std::size_t sizeWithZero>
+    Bytes::Bytes(const char (&data)[sizeWithZero])
+        : Bytes(data, static_cast<uint32>(sizeWithZero-1))
+    {
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template<class T, std::size_t N> requires(sizeof(byte) == sizeof(T))
     Bytes::Bytes(const std::array<T, N>& data)
         : Bytes(data.data(), static_cast<uint32>(data.size()))
@@ -85,6 +108,13 @@ namespace dci
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class T, class... OtherArgs> requires(sizeof(byte) == sizeof(T))
     Bytes::Bytes(const std::basic_string<T, OtherArgs...>& data)
+        : Bytes(data.data(), static_cast<uint32>(data.size()))
+    {
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class T, class... OtherArgs> requires(sizeof(byte) == sizeof(T))
+    Bytes::Bytes(const std::basic_string_view<T, OtherArgs...>& data)
         : Bytes(data.data(), static_cast<uint32>(data.size()))
     {
     }

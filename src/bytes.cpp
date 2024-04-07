@@ -42,8 +42,8 @@ namespace dci
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    Bytes::Bytes(const char* csz)
-        : himpl::FaceLayout<Bytes, impl::Bytes>(csz)
+    Bytes::Bytes(bytes::details::CszWrapper cszWrapper)
+        : himpl::FaceLayout<Bytes, impl::Bytes>(cszWrapper._csz)
     {
     }
 
