@@ -106,7 +106,7 @@ TEST(bytes, cursor)
         EXPECT_EQ(5u, c.read(a, 5));
         EXPECT_EQ(5u, b2.size());
 
-        EXPECT_EQ(std::strong_ordering::equal, c.compare(nullptr, 0));
+        EXPECT_EQ(std::strong_ordering::greater, c.compare(nullptr, 0));
 
         EXPECT_NE(String(), c.toString());
         EXPECT_EQ(String(), c.toHex());
@@ -141,7 +141,10 @@ TEST(bytes, cursor)
                 {
                     Cursor c2(c);
                     byte ab[1] = {byte(pos)};
-                    EXPECT_EQ(std::strong_ordering::equal, c2.compare(ab, 1));
+                    if(c.size()>1)
+                        EXPECT_EQ(std::strong_ordering::greater, c2.compare(ab, 1));
+                    else
+                        EXPECT_EQ(std::strong_ordering::equal, c2.compare(ab, 1));
                 }
 
                 pos += static_cast<uint32>(c.advance(step));
@@ -176,7 +179,10 @@ TEST(bytes, cursor)
                 {
                     Cursor c2(c);
                     byte ab[1] = {byte(pos)};
-                    EXPECT_EQ(std::strong_ordering::equal, c2.compare(ab, 1));
+                    if(c.size()>1)
+                        EXPECT_EQ(std::strong_ordering::greater, c2.compare(ab, 1));
+                    else
+                        EXPECT_EQ(std::strong_ordering::equal, c2.compare(ab, 1));
                 }
             }
             while(!c.atBegin());

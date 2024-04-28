@@ -452,7 +452,12 @@ namespace dci::bytes::impl
 
                 //оба потока продолжаются, сравнивать контент
                 int cmp = std::memcmp(ownData, rivalData, size);
-                return performing::StepResult{0 != cmp, cmp == 0 ? std::strong_ordering::equal : cmp < 0 ? std::strong_ordering::less : std::strong_ordering::greater};
+                return performing::StepResult{0 != cmp,
+                    cmp == 0 ?
+                        std::strong_ordering::equal :
+                        cmp < 0 ?
+                            std::strong_ordering::less :
+                            std::strong_ordering::greater};
             });
     }
 
