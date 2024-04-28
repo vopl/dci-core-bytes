@@ -434,23 +434,25 @@ namespace dci::bytes::impl
             {
                 if(!size)
                 {
-                    return performing::StepResult{true, std::strong_ordering::equal};
+                    if(!ownData && !rivalData)
+                    {
+                        return performing::StepResult{true, std::strong_ordering::equal};
+                    }
+                    else if(!ownData)
+                    {
+                        return performing::StepResult{true, std::strong_ordering::less};
+                    }
+                    else //if(!rivalData)
+                    {
+                        return performing::StepResult{true, std::strong_ordering::greater};
+                    }
                 }
 
-                dbgAssert(ownData || rivalData);
+                dbgAssert(ownData && rivalData);
 
-                if(ownData && rivalData)
-                {
-                    //оба потока продолжаются, сравнивать контент
-                    int cmp = std::memcmp(ownData, rivalData, size);
-                    return performing::StepResult{0 != cmp, cmp == 0 ? std::strong_ordering::equal : cmp < 0 ? std::strong_ordering::less : std::strong_ordering::greater};
-                }
-
-                if(ownData) return performing::StepResult{true, std::strong_ordering::greater};//собственный поток еще не закончился, внешний закончился - собственные данные 'больше'
-
-                //if(rivalData) return -1;//собственный поток закончился, внешний еще нет - внешние данные 'больше'
-                dbgAssert(rivalData);
-                return performing::StepResult{true, std::strong_ordering::less};
+                //оба потока продолжаются, сравнивать контент
+                int cmp = std::memcmp(ownData, rivalData, size);
+                return performing::StepResult{0 != cmp, cmp == 0 ? std::strong_ordering::equal : cmp < 0 ? std::strong_ordering::less : std::strong_ordering::greater};
             });
     }
 

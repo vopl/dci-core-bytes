@@ -12,87 +12,90 @@
 using namespace dci;
 
 /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-TEST(bytes, probe)
+TEST(bytes, ctor)
 {
-    /////////////////////
-    // ctor
-    {
-        EXPECT_EQ(Bytes{}.toString(), String{});
-        EXPECT_EQ(Bytes{"42"}.toString(), String{"42"});
-        EXPECT_EQ((Bytes{"42", 2}.toString()), String{"42"});
-        EXPECT_EQ((Bytes{"\0\0\0", 3}.toString()), (String(std::size_t{3}, '\0')));
+    EXPECT_EQ(Bytes{}.toString(), String{});
+    EXPECT_EQ(Bytes{"42"}.toString(), String{"42"});
+    EXPECT_EQ((Bytes{"42", 2}.toString()), String{"42"});
+    EXPECT_EQ((Bytes{"\0\0\0", 3}.toString()), (String(std::size_t{3}, '\0')));
 
-        EXPECT_EQ(Bytes{Bytes{"42"}}.toString(), String{"42"});
+    EXPECT_EQ(Bytes{Bytes{"42"}}.toString(), String{"42"});
 
-        Bytes b1{"42"};
-        EXPECT_EQ(Bytes{b1}.toString(), String{"42"});
-    }
+    Bytes b1{"42"};
+    EXPECT_EQ(Bytes{b1}.toString(), String{"42"});
+}
 
-    /////////////////////
-    // =
-    {
-        Bytes b1{"42"};
-        Bytes b2;
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+TEST(bytes, eq)
+{
+    Bytes b1{"42"};
+    Bytes b2;
 
-        b2 = b1;
-        EXPECT_EQ(b2.toString(), String{"42"});
-        EXPECT_EQ(b1.toString(), String{"42"});
+    b2 = b1;
+    EXPECT_EQ(b2.toString(), String{"42"});
+    EXPECT_EQ(b1.toString(), String{"42"});
 
-        b2 = std::move(b1);
-        EXPECT_EQ(b2.toString(), String{"42"});
-        EXPECT_EQ(b1.toString(), String{});
-    }
+    b2 = std::move(b1);
+    EXPECT_EQ(b2.toString(), String{"42"});
+    EXPECT_EQ(b1.toString(), String{});
+}
 
-    /////////////////////
-    // cmp
-    {
-        Bytes b1{"42"};
-        Bytes b2{"43"};
-        Bytes b3{"43"};
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+TEST(bytes, cmp)
+{
+    Bytes b1{"42"};
+    Bytes b2{"43"};
+    Bytes b3{"43"};
+    Bytes b4{"435"};
 
-        EXPECT_TRUE(b2 == b3);
-        EXPECT_TRUE(b1 != b2);
-        EXPECT_TRUE(b1 <  b2);
-        EXPECT_TRUE(b2 >  b1);
-        EXPECT_TRUE(b1 <= b1);
-        EXPECT_TRUE(b1 <= b2);
-        EXPECT_TRUE(b2 >= b1);
-        EXPECT_TRUE(b2 >= b2);
-    }
+    EXPECT_TRUE(b2 == b3);
+    EXPECT_TRUE(b1 != b2);
+    EXPECT_TRUE(b1 <  b2);
+    EXPECT_TRUE(b2 >  b1);
+    EXPECT_TRUE(b1 <= b1);
+    EXPECT_TRUE(b1 <= b2);
+    EXPECT_TRUE(b2 >= b1);
+    EXPECT_TRUE(b2 >= b2);
 
-    /////////////////////
-    // clone
-    {
-        EXPECT_EQ(Bytes{static_cast<const Bytes&>(Bytes{"42"})}.toString(), String{"42"});
-        EXPECT_EQ(Bytes{Bytes{"42"}}.toString(), String{"42"});
-    }
+    EXPECT_TRUE(b3 != b4);
+    EXPECT_TRUE(b3 < b4);
+    EXPECT_TRUE(b3 <= b4);
+    EXPECT_TRUE(b4 > b3);
+    EXPECT_TRUE(b4 >= b3);
+}
 
-    /////////////////////
-    // empty
-    {
-        EXPECT_TRUE(Bytes{}.empty());
-        EXPECT_TRUE(Bytes{""}.empty());
-        EXPECT_TRUE((Bytes{"", 0}.empty()));
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+TEST(bytes, clone)
+{
+    EXPECT_EQ(Bytes{static_cast<const Bytes&>(Bytes{"42"})}.toString(), String{"42"});
+    EXPECT_EQ(Bytes{Bytes{"42"}}.toString(), String{"42"});
+}
 
-        EXPECT_FALSE(Bytes{"42"}.empty());
-    }
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+TEST(bytes, empty)
+{
+    EXPECT_TRUE(Bytes{}.empty());
+    EXPECT_TRUE(Bytes{""}.empty());
+    EXPECT_TRUE((Bytes{"", 0}.empty()));
 
-    /////////////////////
-    // size
-    {
-        EXPECT_EQ(Bytes{}.size(), 0u);
-        EXPECT_EQ(Bytes{""}.size(), 0u);
-        EXPECT_EQ(Bytes{"42"}.size(), 2u);
-        EXPECT_EQ(Bytes{Bytes{"42"}}.size(), 2u);
-    }
+    EXPECT_FALSE(Bytes{"42"}.empty());
+}
 
-    /////////////////////
-    // clear
-    {
-        Bytes b1{"42"};
-        b1.clear();
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+TEST(bytes, size)
+{
+    EXPECT_EQ(Bytes{}.size(), 0u);
+    EXPECT_EQ(Bytes{""}.size(), 0u);
+    EXPECT_EQ(Bytes{"42"}.size(), 2u);
+    EXPECT_EQ(Bytes{Bytes{"42"}}.size(), 2u);
+}
 
-        EXPECT_EQ(b1.size(), 0u);
-        EXPECT_TRUE(b1.empty());
-    }
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+TEST(bytes, clear)
+{
+    Bytes b1{"42"};
+    b1.clear();
+
+    EXPECT_EQ(b1.size(), 0u);
+    EXPECT_TRUE(b1.empty());
 }
